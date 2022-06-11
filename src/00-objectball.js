@@ -125,7 +125,7 @@ function gameObject() {
   }
   
   function playersObject() {
-   
+    //   return Object.assign({}, game.home.players, game.away.players)
     return { ...game.home.players, ...game.away.players };
   }
   
@@ -164,8 +164,12 @@ function gameObject() {
   }
   
   function bigShoeRebounds() {
+      /* since Math.max only works with an array of numbers, not objects, we need another approach
+      We can sort an array of objects based on comparing one of the object properties
+      Then the object with the highest property will be at the beginning or end of sorted array
+      (depending on how the sort is written) */
     const biggest = Object.values(players).sort((a, b) => {
-      if (a.shoe > b.shoe) return -1; 
+      if (a.shoe > b.shoe) return -1; // shorthand syntax for an if-block omitting {}
       if (a.shoe < b.shoe) return 1;
       if (a.shoe == b.shoe) return 0;
     })[0];
@@ -174,15 +178,20 @@ function gameObject() {
   }
   
   function mostPointsScored() {
+      /* in this solution I use Object.entries() so that I have an array that is sortable, but I also still 
+      keep the key with it's associated value, necessary since the players' names are the keys and that's
+      what I want to return */
     const sorted = Object.entries(players).sort((a, b) => {
       if (a[1].points > b[1].points) return -1;
       if (a[1].points < b[1].points) return 1;
       if (a[1].points == b[1].points) return 0;
     });
-    return sorted[0][0]; 
+    return sorted[0][0]; // syntax for accessing a value in a nested array => array[outer-array-index][inner-array-index]
   }
   
   function winningTeam() {
+      // this approach only works because we know the teams are specificaly 'home' and 'away'
+      // a more robust approach would need to iterate through the keys of the game object and reduce a total score for each tea
     const homeStats = Object.values(game.home.players); 
     const awayStats = Object.values(game.away.players); m
     const homeScore = homeStats.reduce((total, stat) => total + stat.points, 0);
@@ -193,10 +202,12 @@ function gameObject() {
     } else if (awayScore > homeScore) {
       return game.away.teamName;
     } else {
-      return "Teams are tied!"; 
+      return "Teams are tied!"; // This is an edge case which doesn't apply with the given data
+      // but would be handled given a different data set
     }
   }
   
+  // 'Bismack Biyombo' and 'Brendan Hayword' are actually equal in length, but this function just returns 'Bismack Biyombo'
   function playerWithLongestName() {
     return Object.keys(players).sort((a, b) => {
       if (a.length > b.length) return -1;
@@ -205,6 +216,8 @@ function gameObject() {
     })[0];
   }
   
+  // since playerWithLongestName() returns 'Bismack Biyombo', this function returns false, but if you used 'Brendan Hayword' instead, the return would be true
+  // (I think this exercise needs to be updated so that there is one player with the longest name)
   function doesLongNameStealATon() {
     const allStats = Object.values(players);
     const maxSteals = Math.max(allStats.map((s) => s.steals));
@@ -213,3 +226,4 @@ function gameObject() {
   }
   
   debugger;
+  
